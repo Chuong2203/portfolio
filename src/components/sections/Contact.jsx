@@ -1,29 +1,55 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { RevealOnScroll } from "../RevealOnScroll";
 import emailjs from "emailjs-com";
-
+import {message, notification} from "antd"
 export const Contact = () => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     message: "",
   });
+  const [clickButton, setClickButton] = useState(false)
+const  [api, contextHolder ]= notification.useNotification()
+const openNotification=()=>{
+  api.open({
 
+    message:<div style={{fontWeight:'bold', color:'red'}}>Thông báo</div>,
+    description:' Cảm ơn bạn đã liên lạc với tôi, tôi sẽ phản hồi lại trong thời gian sớm nhất. Nếu thông báo này còn xuất hiện tức là tôi chưa có Job',
+    duration:2
+  })
+}
+  useEffect(()=>{
+    if(clickButton){
+      setFormData({
+        name: "",
+        email: "",
+        message: "",
+        
+    })
+    setTimeout(() => {
+      setClickButton(false)
+    }, 1000);
+    setTimeout(()=>{
+      openNotification()
+    },1500)
+   
+  }
+  },[clickButton])
   const handleSubmit = (e) => {
-    e.preventDefault();
-
-    emailjs
-      .sendForm(
-        import.meta.env.VITE_SERVICE_ID,
-        import.meta.env.VITE_TEMPLATE_ID,
-        e.target,
-        import.meta.env.VITE_PUBLIC_KEY
-      )
-      .then((result) => {
-        alert("Message Sent!");
-        setFormData({ name: "", email: "", message: "" });
-      })
-      .catch(() => alert("Oops! Something went wrong. Please try again."));
+    setClickButton(true)
+    // e.preventDefault();
+    // emailjs
+    //   .sendForm(
+    //     import.meta.env.VITE_SERVICE_ID,
+    //     import.meta.env.VITE_TEMPLATE_ID,
+    //     e.target,
+    //     import.meta.env.VITE_PUBLIC_KEY
+    //   )
+    //   .then((result) => {
+    //     alert("Message Sent!");
+    //     setFormData({ name: "", email: "", message: "" });
+    //   })
+    //   .catch(() => alert("Oops! Something went wrong. Please try again."));
   };
 
   return (
@@ -31,6 +57,7 @@ export const Contact = () => {
       id="contact"
       className="min-h-screen flex items-center justify-center py-20"
     >
+      {contextHolder}
       <RevealOnScroll>
         <div className="px-4 w-full min-w-[300px] md:w-[500px] sm:w-2/3 p-6">
           <h2 className="text-3xl font-bold mb-8 bg-gradient-to-r from-blue-500 to-cyan-400 bg-clip-text text-transparent text-center">
